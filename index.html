@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Balance Bites — رأيك يهمنا</title>
+    <meta name="description" content="شاركنا رأيك في منتجات Balance Bites وساعدنا نطور أكثر">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- ═══════ BACKGROUND ═══════ -->
+    <div class="bg" id="bg"></div>
+
+    <!-- ═══════ PROGRESS BAR ═══════ -->
+    <div class="progress-bar">
+        <div class="progress-fill" id="progressFill"></div>
+    </div>
+
+    <!-- ═══════ FORM ═══════ -->
+    <div class="form-wrapper">
+        <div class="steps-container">
+
+            <!-- ══ STEP 0: WELCOME ══ -->
+            <div class="step active" data-step="0">
+                <div class="step-content">
+                    <img src="BB green.png" alt="Balance Bites" class="brand-logo">
+                    <div class="brand-name">Balance Bites</div>
+                    <h1 class="step-title" id="greeting">رأيك يهمنا! 🌿</h1>
+                    <p class="step-subtitle">ساعدنا نطوّر منتجاتنا أكتر من خلال إجابتك على كام سؤال بسيط — مش هياخد أكتر من دقيقتين</p>
+                    <button class="btn-primary" onclick="goTo(1)">
+                        يلا نبدأ
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 5 5 12 12 19"/></svg>
+                    </button>
+                    <span class="enter-hint">اضغط <strong>Enter ↵</strong></span>
+                </div>
+            </div>
+
+            <!-- ══ STEP 1: DISCOVERY ══ -->
+            <div class="step" data-step="1" id="step-discovery">
+                <div class="step-content">
+                    <span class="step-number">١ من ٩</span>
+                    <h1 class="step-title">إزاي عرفت عننا؟ 🔍</h1>
+                    <p class="step-subtitle">اختار الإجابة الأقرب</p>
+                    <div class="select-grid">
+                        <div class="select-card" data-value="سوشيال ميديا" onclick="selectDiscovery(this)">
+                            <span class="card-check">✓</span>
+                            <span class="card-icon">📱</span>
+                            <span class="card-label">سوشيال ميديا</span>
+                        </div>
+                        <div class="select-card" data-value="صاحب / قريب" onclick="selectDiscovery(this)">
+                            <span class="card-check">✓</span>
+                            <span class="card-icon">👥</span>
+                            <span class="card-label">صاحب / قريب</span>
+                        </div>
+                        <div class="select-card" data-value="محل / سوبرماركت" onclick="selectDiscovery(this)">
+                            <span class="card-check">✓</span>
+                            <span class="card-icon">🏪</span>
+                            <span class="card-label">محل / سوبرماركت</span>
+                        </div>
+                        <div class="select-card" data-value="إعلان" onclick="selectDiscovery(this)">
+                            <span class="card-check">✓</span>
+                            <span class="card-icon">📢</span>
+                            <span class="card-label">إعلان</span>
+                        </div>
+                        <div class="select-card" data-value="إيفنت / معرض" onclick="selectDiscovery(this)">
+                            <span class="card-check">✓</span>
+                            <span class="card-icon">🎪</span>
+                            <span class="card-label">إيفنت / معرض</span>
+                        </div>
+                        <div class="select-card" data-value="غير ذلك" onclick="selectDiscovery(this)">
+                            <span class="card-check">✓</span>
+                            <span class="card-icon">💬</span>
+                            <span class="card-label">غير ذلك</span>
+                        </div>
+                    </div>
+                    <div class="btn-row">
+                        <button class="btn-secondary" onclick="goTo(0)">رجوع ←</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══ STEP 2: FREQUENCY ══ -->
+            <div class="step" data-step="2" id="step-frequency">
+                <div class="step-content">
+                    <span class="step-number">٢ من ٩</span>
+                    <h1 class="step-title">بتشتري منتجاتنا كل قد إيه؟ 🛒</h1>
+                    <p class="step-subtitle">اختار الإجابة الأقرب</p>
+                    <div class="select-grid single-col">
+                        <div class="select-card" data-value="أول مرة" onclick="selectFrequency(this)">
+                            <span class="card-check">✓</span>
+                            <span class="card-icon">🆕</span>
+                            <span class="card-label">أول مرة أجرب</span>
+                        </div>
+                        <div class="select-card" data-value="نادراً" onclick="selectFrequency(this)">
+                            <span class="card-check">✓</span>
+                            <span class="card-icon">🔸</span>
+                            <span class="card-label">نادراً</span>
+                        </div>
+                        <div class="select-card" data-value="أحياناً" onclick="selectFrequency(this)">
+                            <span class="card-check">✓</span>
+                            <span class="card-icon">🔹</span>
+                            <span class="card-label">أحياناً</span>
+                        </div>
+                        <div class="select-card" data-value="بانتظام" onclick="selectFrequency(this)">
+                            <span class="card-check">✓</span>
+                            <span class="card-icon">💚</span>
+                            <span class="card-label">بانتظام</span>
+                        </div>
+                    </div>
+                    <div class="btn-row">
+                        <button class="btn-secondary" onclick="goTo(1)">رجوع ←</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══ STEP 3: OVERALL EXPERIENCE ══ -->
+            <div class="step" data-step="3">
+                <div class="step-content">
+                    <span class="step-number">٣ من ٩</span>
+                    <h1 class="step-title">إيه رأيك في منتجاتنا بشكل عام؟</h1>
+                    <p class="step-subtitle">اختار الإيموجي اللي بيعبّر عن تجربتك</p>
+                    <div class="emoji-grid">
+                        <button class="emoji-btn" data-rating="1" onclick="selectOverall(this)">
+                            <span>😞</span><span class="emoji-label">سيئة</span>
+                        </button>
+                        <button class="emoji-btn" data-rating="2" onclick="selectOverall(this)">
+                            <span>😕</span><span class="emoji-label">مش حلوة</span>
+                        </button>
+                        <button class="emoji-btn" data-rating="3" onclick="selectOverall(this)">
+                            <span>😊</span><span class="emoji-label">كويسة</span>
+                        </button>
+                        <button class="emoji-btn" data-rating="4" onclick="selectOverall(this)">
+                            <span>😄</span><span class="emoji-label">حلوة</span>
+                        </button>
+                        <button class="emoji-btn" data-rating="5" onclick="selectOverall(this)">
+                            <span>🤩</span><span class="emoji-label">ممتازة</span>
+                        </button>
+                    </div>
+                    <div class="btn-row">
+                        <button class="btn-secondary" onclick="goTo(2)">رجوع ←</button>
+                        <button class="btn-primary" id="btnOverall" disabled onclick="goTo(4)">التالي</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══ STEP 4: FLAVOR RATINGS ══ -->
+            <div class="step" data-step="4">
+                <div class="step-content">
+                    <span class="step-number">٤ من ٩</span>
+                    <h1 class="step-title">قيّم النكهات اللي جربتها ⭐</h1>
+                    <p class="step-subtitle">لو ما جربت نكهة سيبها من غير تقييم</p>
+                    <div class="flavor-cards">
+                        <div class="flavor-card">
+                            <div class="flavor-header">
+                                <div class="flavor-emoji">🌿</div>
+                                <div><div class="flavor-name">زعتر</div><div class="flavor-name-en">Thyme</div></div>
+                            </div>
+                            <div class="star-rating" data-flavor="zaatar">
+                                <button class="star-btn" data-star="1" onclick="rateFlavor('zaatar',1)">★</button>
+                                <button class="star-btn" data-star="2" onclick="rateFlavor('zaatar',2)">★</button>
+                                <button class="star-btn" data-star="3" onclick="rateFlavor('zaatar',3)">★</button>
+                                <button class="star-btn" data-star="4" onclick="rateFlavor('zaatar',4)">★</button>
+                                <button class="star-btn" data-star="5" onclick="rateFlavor('zaatar',5)">★</button>
+                            </div>
+                        </div>
+                        <div class="flavor-card">
+                            <div class="flavor-header">
+                                <div class="flavor-emoji">🌶️</div>
+                                <div><div class="flavor-name">بابريكا</div><div class="flavor-name-en">Chili Pepper</div></div>
+                            </div>
+                            <div class="star-rating" data-flavor="paprika">
+                                <button class="star-btn" data-star="1" onclick="rateFlavor('paprika',1)">★</button>
+                                <button class="star-btn" data-star="2" onclick="rateFlavor('paprika',2)">★</button>
+                                <button class="star-btn" data-star="3" onclick="rateFlavor('paprika',3)">★</button>
+                                <button class="star-btn" data-star="4" onclick="rateFlavor('paprika',4)">★</button>
+                                <button class="star-btn" data-star="5" onclick="rateFlavor('paprika',5)">★</button>
+                            </div>
+                        </div>
+                        <div class="flavor-card">
+                            <div class="flavor-header">
+                                <div class="flavor-emoji">🧂</div>
+                                <div><div class="flavor-name">ملح البحر و فلفل أسود</div><div class="flavor-name-en">Sea Salt & Black Pepper</div></div>
+                            </div>
+                            <div class="star-rating" data-flavor="salt_pepper">
+                                <button class="star-btn" data-star="1" onclick="rateFlavor('salt_pepper',1)">★</button>
+                                <button class="star-btn" data-star="2" onclick="rateFlavor('salt_pepper',2)">★</button>
+                                <button class="star-btn" data-star="3" onclick="rateFlavor('salt_pepper',3)">★</button>
+                                <button class="star-btn" data-star="4" onclick="rateFlavor('salt_pepper',4)">★</button>
+                                <button class="star-btn" data-star="5" onclick="rateFlavor('salt_pepper',5)">★</button>
+                            </div>
+                        </div>
+                        <div class="flavor-card">
+                            <div class="flavor-header">
+                                <div class="flavor-emoji">🌱</div>
+                                <div><div class="flavor-name">روزماري و ريحان</div><div class="flavor-name-en">Rosemary & Basil</div></div>
+                            </div>
+                            <div class="star-rating" data-flavor="rosemary_basil">
+                                <button class="star-btn" data-star="1" onclick="rateFlavor('rosemary_basil',1)">★</button>
+                                <button class="star-btn" data-star="2" onclick="rateFlavor('rosemary_basil',2)">★</button>
+                                <button class="star-btn" data-star="3" onclick="rateFlavor('rosemary_basil',3)">★</button>
+                                <button class="star-btn" data-star="4" onclick="rateFlavor('rosemary_basil',4)">★</button>
+                                <button class="star-btn" data-star="5" onclick="rateFlavor('rosemary_basil',5)">★</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn-row">
+                        <button class="btn-secondary" onclick="goTo(3)">رجوع ←</button>
+                        <button class="btn-primary" onclick="goTo(5)">التالي</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══ STEP 5: FAVORITE FLAVOR ══ -->
+            <div class="step" data-step="5" id="step-favorite">
+                <div class="step-content">
+                    <span class="step-number">٥ من ٩</span>
+                    <h1 class="step-title">إيه نكهتك المفضلة؟ 👑</h1>
+                    <p class="step-subtitle">اختار نكهة واحدة</p>
+                    <div class="select-grid">
+                        <div class="select-card" data-value="زعتر" onclick="selectFavorite(this)">
+                            <span class="card-check">✓</span>
+                            <span class="card-icon">🌿</span>
+                            <span class="card-label">زعتر</span>
+                        </div>
+                        <div class="select-card" data-value="بابريكا" onclick="selectFavorite(this)">
+                            <span class="card-check">✓</span>
+                            <span class="card-icon">🌶️</span>
+                            <span class="card-label">بابريكا</span>
+                        </div>
+                        <div class="select-card" data-value="ملح و فلفل" onclick="selectFavorite(this)">
+                            <span class="card-check">✓</span>
+                            <span class="card-icon">🧂</span>
+                            <span class="card-label">ملح و فلفل</span>
+                        </div>
+                        <div class="select-card" data-value="روزماري و ريحان" onclick="selectFavorite(this)">
+                            <span class="card-check">✓</span>
+                            <span class="card-icon">🌱</span>
+                            <span class="card-label">روزماري و ريحان</span>
+                        </div>
+                    </div>
+                    <div class="btn-row">
+                        <button class="btn-secondary" onclick="goTo(4)">رجوع ←</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══ STEP 6: SATISFACTION GRID ══ -->
+            <div class="step" data-step="6">
+                <div class="step-content">
+                    <span class="step-number">٦ من ٩</span>
+                    <h1 class="step-title">قيّم تجربتك معانا</h1>
+                    <p class="step-subtitle">من ١ لـ ٥ نجوم</p>
+                    <div class="satisfaction-grid">
+                        <div class="satisfaction-item">
+                            <div class="satisfaction-label"><div class="satisfaction-icon">👅</div><span>الطعم</span></div>
+                            <div class="mini-stars" data-area="taste">
+                                <button class="mini-star" data-star="1" onclick="rateArea('taste',1)">★</button>
+                                <button class="mini-star" data-star="2" onclick="rateArea('taste',2)">★</button>
+                                <button class="mini-star" data-star="3" onclick="rateArea('taste',3)">★</button>
+                                <button class="mini-star" data-star="4" onclick="rateArea('taste',4)">★</button>
+                                <button class="mini-star" data-star="5" onclick="rateArea('taste',5)">★</button>
+                            </div>
+                        </div>
+                        <div class="satisfaction-item">
+                            <div class="satisfaction-label"><div class="satisfaction-icon">🥨</div><span>القرمشة</span></div>
+                            <div class="mini-stars" data-area="crunchiness">
+                                <button class="mini-star" data-star="1" onclick="rateArea('crunchiness',1)">★</button>
+                                <button class="mini-star" data-star="2" onclick="rateArea('crunchiness',2)">★</button>
+                                <button class="mini-star" data-star="3" onclick="rateArea('crunchiness',3)">★</button>
+                                <button class="mini-star" data-star="4" onclick="rateArea('crunchiness',4)">★</button>
+                                <button class="mini-star" data-star="5" onclick="rateArea('crunchiness',5)">★</button>
+                            </div>
+                        </div>
+                        <div class="satisfaction-item">
+                            <div class="satisfaction-label"><div class="satisfaction-icon">📦</div><span>التغليف</span></div>
+                            <div class="mini-stars" data-area="packaging">
+                                <button class="mini-star" data-star="1" onclick="rateArea('packaging',1)">★</button>
+                                <button class="mini-star" data-star="2" onclick="rateArea('packaging',2)">★</button>
+                                <button class="mini-star" data-star="3" onclick="rateArea('packaging',3)">★</button>
+                                <button class="mini-star" data-star="4" onclick="rateArea('packaging',4)">★</button>
+                                <button class="mini-star" data-star="5" onclick="rateArea('packaging',5)">★</button>
+                            </div>
+                        </div>
+                        <div class="satisfaction-item">
+                            <div class="satisfaction-label"><div class="satisfaction-icon">💰</div><span>السعر</span></div>
+                            <div class="mini-stars" data-area="price">
+                                <button class="mini-star" data-star="1" onclick="rateArea('price',1)">★</button>
+                                <button class="mini-star" data-star="2" onclick="rateArea('price',2)">★</button>
+                                <button class="mini-star" data-star="3" onclick="rateArea('price',3)">★</button>
+                                <button class="mini-star" data-star="4" onclick="rateArea('price',4)">★</button>
+                                <button class="mini-star" data-star="5" onclick="rateArea('price',5)">★</button>
+                            </div>
+                        </div>
+                        <div class="satisfaction-item">
+                            <div class="satisfaction-label"><div class="satisfaction-icon">🏪</div><span>التوافر</span></div>
+                            <div class="mini-stars" data-area="availability">
+                                <button class="mini-star" data-star="1" onclick="rateArea('availability',1)">★</button>
+                                <button class="mini-star" data-star="2" onclick="rateArea('availability',2)">★</button>
+                                <button class="mini-star" data-star="3" onclick="rateArea('availability',3)">★</button>
+                                <button class="mini-star" data-star="4" onclick="rateArea('availability',4)">★</button>
+                                <button class="mini-star" data-star="5" onclick="rateArea('availability',5)">★</button>
+                            </div>
+                        </div>
+                        <div class="satisfaction-item">
+                            <div class="satisfaction-label"><div class="satisfaction-icon">💪</div><span>القيمة الغذائية</span></div>
+                            <div class="mini-stars" data-area="nutrition">
+                                <button class="mini-star" data-star="1" onclick="rateArea('nutrition',1)">★</button>
+                                <button class="mini-star" data-star="2" onclick="rateArea('nutrition',2)">★</button>
+                                <button class="mini-star" data-star="3" onclick="rateArea('nutrition',3)">★</button>
+                                <button class="mini-star" data-star="4" onclick="rateArea('nutrition',4)">★</button>
+                                <button class="mini-star" data-star="5" onclick="rateArea('nutrition',5)">★</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn-row">
+                        <button class="btn-secondary" onclick="goTo(5)">رجوع ←</button>
+                        <button class="btn-primary" onclick="goTo(7)">التالي</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══ STEP 7: WOULD YOU RECOMMEND? ══ -->
+            <div class="step" data-step="7">
+                <div class="step-content">
+                    <span class="step-number">٧ من ٩</span>
+                    <h1 class="step-title">هتنصح صحابك بمنتجاتنا؟</h1>
+                    <p class="step-subtitle">اختار إجابة واحدة</p>
+                    <div class="recommend-grid">
+                        <button class="recommend-btn" data-value="أكيد طبعاً" onclick="selectRecommend(this)">
+                            <span class="rec-emoji">💚</span>
+                            <span class="rec-label">أكيد طبعاً</span>
+                        </button>
+                        <button class="recommend-btn" data-value="غالباً" onclick="selectRecommend(this)">
+                            <span class="rec-emoji">👍</span>
+                            <span class="rec-label">غالباً</span>
+                        </button>
+                        <button class="recommend-btn" data-value="مش متأكد" onclick="selectRecommend(this)">
+                            <span class="rec-emoji">🤔</span>
+                            <span class="rec-label">مش متأكد</span>
+                        </button>
+                        <button class="recommend-btn" data-value="لا" onclick="selectRecommend(this)">
+                            <span class="rec-emoji">👎</span>
+                            <span class="rec-label">لا</span>
+                        </button>
+                    </div>
+                    <div class="btn-row">
+                        <button class="btn-secondary" onclick="goTo(6)">رجوع ←</button>
+                        <button class="btn-primary" id="btnRecommend" disabled onclick="goTo(8)">التالي</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══ STEP 8: SUGGESTIONS ══ -->
+            <div class="step" data-step="8">
+                <div class="step-content">
+                    <span class="step-number">٨ من ٩</span>
+                    <h1 class="step-title">عندك أي اقتراحات؟ 💡</h1>
+                    <p class="step-subtitle">أي حاجة تحب تقولهالنا — نكهات جديدة، ملاحظات، أفكار</p>
+                    <div class="input-group">
+                        <textarea class="text-input" id="suggestions" placeholder="مثلاً: ياريت تعملوا نكهة جبنة..." rows="4"></textarea>
+                    </div>
+                    <div class="btn-row">
+                        <button class="btn-secondary" onclick="goTo(7)">رجوع ←</button>
+                        <button class="btn-primary" onclick="goTo(9)">التالي</button>
+                    </div>
+                    <span class="enter-hint">اضغط <strong>Ctrl + Enter</strong></span>
+                </div>
+            </div>
+
+            <!-- ══ STEP 9: CONTACT (OPTIONAL) ══ -->
+            <div class="step" data-step="9">
+                <div class="step-content">
+                    <span class="step-number">٩ من ٩</span>
+                    <h1 class="step-title">حابب نتواصل معاك؟</h1>
+                    <p class="step-subtitle">اختياري — لو حابب نبعتلك عروض أو جديدنا</p>
+                    <p class="skip-text">تقدر تتخطى الخطوة دي</p>
+                    <div class="input-row">
+                        <input class="text-input" type="text" id="userName" placeholder="اسمك">
+                        <input class="text-input" type="tel" id="userPhone" placeholder="رقم الموبايل (اختياري)">
+                        <input class="text-input" type="email" id="userEmail" placeholder="الإيميل (اختياري)" dir="ltr" style="text-align:left">
+                    </div>
+                    <div class="btn-row">
+                        <button class="btn-secondary" onclick="goTo(8)">رجوع ←</button>
+                        <button class="btn-primary" id="btnSubmit" onclick="submitForm()">
+                            إرسال
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ══ STEP 10: THANK YOU ══ -->
+            <div class="step" data-step="10">
+                <div class="step-content">
+                    <div class="thankyou-check">
+                        <svg viewBox="0 0 24 24"><polyline points="6 12 10 17 18 7"/></svg>
+                    </div>
+                    <h1 class="step-title">شكراً ليك! 🎉</h1>
+                    <p class="step-subtitle">رأيك مهم جداً لينا وهيساعدنا نقدملك منتجات أحسن وأحسن</p>
+                    <img src="BB green.png" alt="Balance Bites" style="width:50px;opacity:0.4;margin-top:16px">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- ═══════ CONFETTI ═══════ -->
+    <div class="confetti-container" id="confetti"></div>
+
+    <script src="app.js"></script>
+</body>
+</html>
