@@ -1369,9 +1369,9 @@ body.dark .step-number {
   }
 
   .step-content {
-    margin: auto 0;
-    padding-top: 12px;
-    padding-bottom: 120px;
+    margin: 0 auto;
+    padding-top: 20px;
+    padding-bottom: 160px; /* Increased to avoid occlusion by fixed footer */
   }
 
   .btn-primary {
