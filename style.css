@@ -348,12 +348,11 @@ body {
 }
 
 @media (max-width: 640px) {
-  .step {
-    padding: 20px 16px;
-    padding-top: 24px;
-    justify-content: flex-start;
+  .enter-hint {
+    display: none;
   }
 }
+
 /* ═══════════════════════════════════════════════════════════
    EMOJI RATING
    ═══════════════════════════════════════════════════════════ */
