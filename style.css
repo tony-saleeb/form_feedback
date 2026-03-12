@@ -1158,7 +1158,8 @@ body.dark .step-number { color: var(--green); }
    ═══════════════════════════════════════════════════════════ */
 @media (max-width: 640px) {
     .step {
-        padding: 24px 16px 0 16px;
+        padding: 20px 16px;
+        padding-top: 24px;
         justify-content: flex-start;
     }
 
@@ -1187,17 +1188,9 @@ body.dark .step-number { color: var(--green); }
     }
 
     .step-content {
-        margin: 0 auto;
+        margin: auto 0;
         padding-top: 12px;
-        padding-bottom: 0;
-    }
-
-    /* Bulletproof Safari scroll spacer */
-    .step-content::after {
-        content: '';
-        display: block;
-        height: 140px;
-        width: 100%;
+        padding-bottom: 80px;
     }
 
     .btn-primary {
