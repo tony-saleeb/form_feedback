@@ -1,5 +1,5 @@
 /* ═══════════════════════════════════════════════════════════
-   Balance Bites — Feedback Form Logic
+   Balance Bites — Feedback Form Logic (v3)
    ═══════════════════════════════════════════════════════════ */
 
 // ═══════════════════════════════════════════════════════════
@@ -13,6 +13,7 @@ const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwTXu6UM7NYVp
 // ═══════════════════════════════════════════════════════════
 let currentStep = 0;
 const TOTAL_STEPS = 10; // last step index
+const ANIM_TYPES = ['default', 'anim-scale', 'anim-slide-left', 'anim-fade'];
 
 const formData = {
     discovery: '',
@@ -30,11 +31,14 @@ const formData = {
 };
 
 // ═══════════════════════════════════════════════════════════
-// INIT — Particles + Greeting
+// INIT
 // ═══════════════════════════════════════════════════════════
 document.addEventListener('DOMContentLoaded', () => {
     initLeaves();
     setGreeting();
+    initDarkMode();
+    initShareLinks();
+    generateQR();
 });
 
 function initLeaves() {
@@ -64,7 +68,6 @@ function setGreeting() {
     const el = document.getElementById('greeting');
     if (!el) return;
     if (hour < 12) el.textContent = 'صباح الخير! 🌿';
-    else if (hour < 18) el.textContent = 'مساء الخير! 🌿';
     else el.textContent = 'مساء الخير! 🌿';
 }
 
@@ -76,7 +79,42 @@ function haptic() {
 }
 
 // ═══════════════════════════════════════════════════════════
-// NAVIGATION
+// PULSE GLOW — visual tap feedback
+// ═══════════════════════════════════════════════════════════
+function pulseGlow(el) {
+    el.classList.remove('pulse-glow');
+    void el.offsetWidth; // force reflow to restart animation
+    el.classList.add('pulse-glow');
+    el.addEventListener('animationend', () => el.classList.remove('pulse-glow'), { once: true });
+}
+
+// ═══════════════════════════════════════════════════════════
+// PROGRESS DOTS
+// ═══════════════════════════════════════════════════════════
+function updateDots(step) {
+    const dots = document.querySelectorAll('.progress-dots .dot');
+    // Hide dots on welcome (0) and thank you (10)
+    const dotsContainer = document.getElementById('progressDots');
+    if (step === 0 || step === 10) {
+        dotsContainer.style.opacity = '0';
+        dotsContainer.style.pointerEvents = 'none';
+    } else {
+        dotsContainer.style.opacity = '1';
+        dotsContainer.style.pointerEvents = 'auto';
+    }
+
+    dots.forEach((dot, i) => {
+        dot.classList.remove('active', 'completed');
+        if (i + 1 === step) {
+            dot.classList.add('active');
+        } else if (i + 1 < step) {
+            dot.classList.add('completed');
+        }
+    });
+}
+
+// ═══════════════════════════════════════════════════════════
+// NAVIGATION — with animated transitions
 // ═══════════════════════════════════════════════════════════
 function goTo(step) {
     if (step === currentStep) return;
@@ -84,6 +122,20 @@ function goTo(step) {
     const steps = document.querySelectorAll('.step');
     const prev = steps[currentStep];
     const next = steps[step];
+
+    // Pick a random animation type
+    const animType = ANIM_TYPES[Math.floor(Math.random() * ANIM_TYPES.length)];
+
+    // Clean old animation classes
+    steps.forEach(s => {
+        ANIM_TYPES.forEach(a => { if (a !== 'default') s.classList.remove(a); });
+    });
+
+    // Apply animation class
+    if (animType !== 'default') {
+        prev.classList.add(animType);
+        next.classList.add(animType);
+    }
 
     // Exit animation
     if (step > currentStep) {
@@ -110,6 +162,9 @@ function goTo(step) {
     const progress = step === 0 ? 0 : (step / TOTAL_STEPS) * 100;
     document.getElementById('progressFill').style.width = progress + '%';
 
+    // Progress dots
+    updateDots(step);
+
     // Auto-focus first input
     setTimeout(() => {
         const input = next.querySelector('textarea, input');
@@ -122,6 +177,7 @@ function goTo(step) {
 // ═══════════════════════════════════════════════════════════
 function selectDiscovery(card) {
     haptic();
+    pulseGlow(card);
     document.querySelectorAll('#step-discovery .select-card').forEach(c => c.classList.remove('selected'));
     card.classList.add('selected');
     formData.discovery = card.dataset.value;
@@ -133,6 +189,7 @@ function selectDiscovery(card) {
 // ═══════════════════════════════════════════════════════════
 function selectFrequency(card) {
     haptic();
+    pulseGlow(card);
     document.querySelectorAll('#step-frequency .select-card').forEach(c => c.classList.remove('selected'));
     card.classList.add('selected');
     formData.frequency = card.dataset.value;
@@ -144,6 +201,7 @@ function selectFrequency(card) {
 // ═══════════════════════════════════════════════════════════
 function selectOverall(btn) {
     haptic();
+    pulseGlow(btn);
     document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
     formData.overallRating = parseInt(btn.dataset.rating);
@@ -162,7 +220,6 @@ function rateFlavor(flavor, rating) {
     const stars = container.querySelectorAll('.star-btn');
     stars.forEach((s, i) => {
         const isActive = (i + 1) <= rating;
-        // Wave animation: stagger the class toggle
         setTimeout(() => {
             s.classList.toggle('active', isActive);
         }, i * 40);
@@ -174,6 +231,7 @@ function rateFlavor(flavor, rating) {
 // ═══════════════════════════════════════════════════════════
 function selectFavorite(card) {
     haptic();
+    pulseGlow(card);
     document.querySelectorAll('#step-favorite .select-card').forEach(c => c.classList.remove('selected'));
     card.classList.add('selected');
     formData.favoriteFlavor = card.dataset.value;
@@ -200,11 +258,79 @@ function rateArea(area, rating) {
 // ═══════════════════════════════════════════════════════════
 function selectRecommend(btn) {
     haptic();
+    pulseGlow(btn);
     document.querySelectorAll('.recommend-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
     formData.recommend = btn.dataset.value;
     document.getElementById('btnRecommend').disabled = false;
     setTimeout(() => goTo(8), 350);
+}
+
+// ═══════════════════════════════════════════════════════════
+// DARK MODE
+// ═══════════════════════════════════════════════════════════
+function initDarkMode() {
+    const saved = localStorage.getItem('bb_dark');
+    if (saved === 'true') {
+        document.body.classList.add('dark');
+        document.getElementById('themeIcon').textContent = '☀️';
+    }
+}
+
+function toggleDark() {
+    haptic();
+    const isDark = document.body.classList.toggle('dark');
+    document.getElementById('themeIcon').textContent = isDark ? '☀️' : '🌙';
+    localStorage.setItem('bb_dark', isDark);
+}
+
+// ═══════════════════════════════════════════════════════════
+// SHARING — WhatsApp + Copy Link
+// ═══════════════════════════════════════════════════════════
+function getFormURL() {
+    return window.location.href.split('#')[0].split('?')[0];
+}
+
+function initShareLinks() {
+    const url = getFormURL();
+    const text = encodeURIComponent('جرّب منتجات Balance Bites وشاركهم رأيك! 🌿\n' + url);
+    const wa = document.getElementById('shareWhatsApp');
+    if (wa) wa.href = `https://wa.me/?text=${text}`;
+}
+
+function copyFormLink() {
+    haptic();
+    const url = getFormURL();
+    navigator.clipboard.writeText(url).then(() => {
+        const btn = document.querySelector('.share-btn.copy-link');
+        const original = btn.innerHTML;
+        btn.innerHTML = '✅ تم النسخ!';
+        setTimeout(() => { btn.innerHTML = original; }, 2000);
+    }).catch(() => {
+        // Fallback for older browsers
+        const ta = document.createElement('textarea');
+        ta.value = getFormURL();
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        document.body.removeChild(ta);
+    });
+}
+
+// ═══════════════════════════════════════════════════════════
+// QR CODE — lightweight generator (no library!)
+// ═══════════════════════════════════════════════════════════
+function generateQR() {
+    const container = document.getElementById('qrCode');
+    if (!container) return;
+    const url = getFormURL();
+    // Use Google Charts QR API (free, no library needed)
+    const img = document.createElement('img');
+    img.src = `https://chart.googleapis.com/chart?cht=qr&chs=240x240&chl=${encodeURIComponent(url)}&choe=UTF-8`;
+    img.alt = 'QR Code';
+    img.style.width = '120px';
+    img.style.height = '120px';
+    container.appendChild(img);
 }
 
 // ═══════════════════════════════════════════════════════════

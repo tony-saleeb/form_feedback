@@ -749,6 +749,250 @@ textarea.text-input {
 @keyframes spin { to { transform: rotate(360deg); } }
 
 /* ═══════════════════════════════════════════════════════════
+   PROGRESS DOTS
+   ═══════════════════════════════════════════════════════════ */
+.progress-dots {
+    position: fixed;
+    top: 12px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 8px;
+    z-index: 101;
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--beige-dark);
+    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.dot.active {
+    background: var(--green);
+    transform: scale(1.3);
+    box-shadow: 0 0 8px rgba(61, 107, 79, 0.4);
+}
+
+.dot.completed {
+    background: var(--green-light);
+    transform: scale(1);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DARK MODE TOGGLE
+   ═══════════════════════════════════════════════════════════ */
+.theme-toggle {
+    position: fixed;
+    top: 14px;
+    right: 16px;
+    z-index: 102;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1.5px solid var(--beige-dark);
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 16px var(--shadow-lg);
+}
+
+.theme-icon {
+    font-size: 18px;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.theme-toggle:active .theme-icon {
+    transform: rotate(180deg) scale(0.8);
+}
+
+/* ═══════════════════════════════════════════════════════════
+   DARK MODE THEME
+   ═══════════════════════════════════════════════════════════ */
+body.dark {
+    --beige: #1A1A1A;
+    --beige-dark: #2D2D2D;
+    --beige-light: #222222;
+    --green: #5A9E6F;
+    --green-dark: #4A8B5F;
+    --green-light: #6FB884;
+    --green-pale: rgba(90, 158, 111, 0.12);
+    --green-glow: rgba(90, 158, 111, 0.2);
+    --black: #F0EDE8;
+    --black-soft: #D9D3C9;
+    --white: #252525;
+    --shadow-sm: rgba(0, 0, 0, 0.15);
+    --shadow: rgba(0, 0, 0, 0.2);
+    --shadow-lg: rgba(0, 0, 0, 0.3);
+}
+
+body.dark .bg::before {
+    background:
+        radial-gradient(ellipse at 30% 20%, rgba(90, 158, 111, 0.06) 0%, transparent 50%),
+        radial-gradient(ellipse at 70% 70%, rgba(61, 107, 79, 0.05) 0%, transparent 50%),
+        radial-gradient(ellipse at 50% 50%, rgba(26, 26, 26, 0.5) 0%, transparent 60%);
+}
+
+body.dark .progress-dots {
+    background: rgba(40, 40, 40, 0.7);
+}
+
+body.dark .theme-toggle {
+    background: rgba(40, 40, 40, 0.7);
+    border-color: #444;
+}
+
+body.dark .text-input::placeholder { color: rgba(240, 237, 232, 0.25); }
+body.dark .emoji-btn .emoji-label { color: rgba(240, 237, 232, 0.4); }
+body.dark .step-subtitle { color: rgba(240, 237, 232, 0.5); }
+body.dark .step-number { color: var(--green); }
+
+/* ═══════════════════════════════════════════════════════════
+   ANIMATED STEP TRANSITIONS
+   ═══════════════════════════════════════════════════════════ */
+.step.anim-fade {
+    transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.step.anim-scale {
+    transition: opacity 0.45s ease, transform 0.45s ease;
+}
+.step.anim-scale.active { transform: scale(1); opacity: 1; }
+.step.anim-scale:not(.active) { transform: scale(0.92); opacity: 0; }
+
+.step.anim-slide-left {
+    transition: opacity 0.45s ease, transform 0.45s ease;
+}
+.step.anim-slide-left.exit-up { transform: translateX(80px); opacity: 0; }
+.step.anim-slide-left:not(.active):not(.exit-up) { transform: translateX(-80px); opacity: 0; }
+
+/* ═══════════════════════════════════════════════════════════
+   PULSE GLOW ON SELECTION
+   ═══════════════════════════════════════════════════════════ */
+@keyframes pulseGlow {
+    0% {
+        box-shadow: 0 0 0 0 rgba(61, 107, 79, 0.35);
+    }
+    70% {
+        box-shadow: 0 0 0 14px rgba(61, 107, 79, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(61, 107, 79, 0);
+    }
+}
+
+.pulse-glow {
+    animation: pulseGlow 0.6s ease-out;
+}
+
+/* ═══════════════════════════════════════════════════════════
+   SHARING SECTION
+   ═══════════════════════════════════════════════════════════ */
+.share-section {
+    margin-top: 28px;
+    padding: 20px;
+    background: var(--white);
+    border-radius: var(--radius-lg);
+    border: 1.5px solid rgba(0, 0, 0, 0.05);
+    box-shadow: 0 2px 12px var(--shadow);
+}
+
+.share-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--black-soft);
+    margin-bottom: 14px;
+}
+
+.share-buttons {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.share-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    border-radius: 12px;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition);
+    text-decoration: none;
+    border: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.share-btn.whatsapp {
+    background: #25D366;
+    color: white;
+}
+
+.share-btn.whatsapp:hover {
+    background: #1DA851;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(37, 211, 102, 0.3);
+}
+
+.share-btn.copy-link {
+    background: var(--green-pale);
+    color: var(--green);
+    border: 1.5px solid var(--beige-dark);
+}
+
+.share-btn.copy-link:hover {
+    background: var(--green-glow);
+    transform: translateY(-2px);
+}
+
+.qr-section {
+    margin-top: 16px;
+    text-align: center;
+}
+
+.qr-label {
+    font-size: 0.72rem;
+    color: rgba(26, 26, 26, 0.35);
+    margin-bottom: 10px;
+}
+
+.qr-code {
+    display: inline-block;
+    padding: 8px;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px var(--shadow);
+}
+
+.qr-code canvas, .qr-code img {
+    display: block;
+    width: 120px;
+    height: 120px;
+}
+
+/* ═══════════════════════════════════════════════════════════
    RESPONSIVE — MOBILE
    ═══════════════════════════════════════════════════════════ */
 @media (max-width: 640px) {
