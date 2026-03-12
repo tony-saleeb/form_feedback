@@ -1339,8 +1339,7 @@ body.dark .step-number {
    ═══════════════════════════════════════════════════════════ */
 @media (max-width: 640px) {
   .step {
-    padding: 20px 16px;
-    padding-top: 40px;
+    padding: 24px 16px;
     justify-content: flex-start;
     overflow-y: auto;
   }
@@ -1370,9 +1369,8 @@ body.dark .step-number {
   }
 
   .step-content {
-    margin: 0 auto;
-    padding-top: 40px;
-    padding-bottom: 40px;
+    margin: auto auto;
+    padding-bottom: 24px;
   }
 
   .btn-primary {
