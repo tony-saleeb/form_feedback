@@ -1,10 +1,9 @@
 /* ═══════════════════════════════════════════════════════════
-   Balance Bites — Feedback Form Logic (v3)
+   Balance Bites — Feedback Form Logic (v4 Premium)
    ═══════════════════════════════════════════════════════════ */
 
 // ═══════════════════════════════════════════════════════════
-// CONFIG — Paste your Google Sheets URL here
-// (Follow the setup instructions in SETUP.md)
+// CONFIG
 // ═══════════════════════════════════════════════════════════
 const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwTXu6UM7NYVpvqGl7lnjMb6ItgUyXxoaQQuwdAJGlF-XSJx4j9U-LGyB64W-DtJaicHw/exec';
 
@@ -12,7 +11,7 @@ const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbwTXu6UM7NYVp
 // STATE
 // ═══════════════════════════════════════════════════════════
 let currentStep = 0;
-const TOTAL_STEPS = 10; // last step index
+const TOTAL_STEPS = 10;
 const ANIM_TYPES = ['default', 'anim-scale', 'anim-slide-left', 'anim-fade'];
 
 const formData = {
@@ -39,6 +38,14 @@ document.addEventListener('DOMContentLoaded', () => {
     initDarkMode();
     initShareLinks();
     generateQR();
+    initSwipe();
+    restoreProgress();
+
+    // Skeleton loader — hide after a short delay
+    setTimeout(() => {
+        const loader = document.getElementById('skeletonLoader');
+        if (loader) loader.classList.add('hidden');
+    }, 800);
 });
 
 function initLeaves() {
@@ -67,23 +74,19 @@ function setGreeting() {
     const hour = new Date().getHours();
     const el = document.getElementById('greeting');
     if (!el) return;
-    if (hour < 12) el.textContent = 'صباح الخير! 🌿';
-    else el.textContent = 'مساء الخير! 🌿';
+    el.textContent = hour < 12 ? 'صباح الخير! 🌿' : 'مساء الخير! 🌿';
 }
 
 // ═══════════════════════════════════════════════════════════
-// HAPTIC FEEDBACK (mobile)
+// HAPTIC + PULSE GLOW
 // ═══════════════════════════════════════════════════════════
 function haptic() {
     if (navigator.vibrate) navigator.vibrate(10);
 }
 
-// ═══════════════════════════════════════════════════════════
-// PULSE GLOW — visual tap feedback
-// ═══════════════════════════════════════════════════════════
 function pulseGlow(el) {
     el.classList.remove('pulse-glow');
-    void el.offsetWidth; // force reflow to restart animation
+    void el.offsetWidth;
     el.classList.add('pulse-glow');
     el.addEventListener('animationend', () => el.classList.remove('pulse-glow'), { once: true });
 }
@@ -93,28 +96,64 @@ function pulseGlow(el) {
 // ═══════════════════════════════════════════════════════════
 function updateDots(step) {
     const dots = document.querySelectorAll('.progress-dots .dot');
-    // Hide dots on welcome (0) and thank you (10)
-    const dotsContainer = document.getElementById('progressDots');
+    const container = document.getElementById('progressDots');
     if (step === 0 || step === 10) {
-        dotsContainer.style.opacity = '0';
-        dotsContainer.style.pointerEvents = 'none';
+        container.style.opacity = '0';
+        container.style.pointerEvents = 'none';
     } else {
-        dotsContainer.style.opacity = '1';
-        dotsContainer.style.pointerEvents = 'auto';
+        container.style.opacity = '1';
+        container.style.pointerEvents = 'auto';
     }
-
     dots.forEach((dot, i) => {
         dot.classList.remove('active', 'completed');
-        if (i + 1 === step) {
-            dot.classList.add('active');
-        } else if (i + 1 < step) {
-            dot.classList.add('completed');
-        }
+        if (i + 1 === step) dot.classList.add('active');
+        else if (i + 1 < step) dot.classList.add('completed');
     });
 }
 
 // ═══════════════════════════════════════════════════════════
-// NAVIGATION — with animated transitions
+// ENCOURAGEMENT TOAST
+// ═══════════════════════════════════════════════════════════
+const ENCOURAGE_MSGS = {
+    7: 'باقي خطوتين بس! 💪',
+    8: 'تقريباً خلصت! ✨',
+    9: 'آخر خطوة! 🎉'
+};
+
+function showEncouragement(step) {
+    const msg = ENCOURAGE_MSGS[step];
+    if (!msg) return;
+    const toast = document.getElementById('encourageToast');
+    if (!toast) return;
+    toast.textContent = msg;
+    toast.classList.add('visible');
+    setTimeout(() => toast.classList.remove('visible'), 2500);
+}
+
+// ═══════════════════════════════════════════════════════════
+// VALIDATION HINTS
+// ═══════════════════════════════════════════════════════════
+function showValidationHint(container, msg) {
+    haptic();
+    // Shake the container
+    container.classList.remove('shake');
+    void container.offsetWidth;
+    container.classList.add('shake');
+    container.addEventListener('animationend', () => container.classList.remove('shake'), { once: true });
+
+    // Show hint text if not already present
+    let hint = container.parentElement.querySelector('.validation-hint');
+    if (!hint) {
+        hint = document.createElement('div');
+        hint.className = 'validation-hint';
+        hint.textContent = msg;
+        container.parentElement.appendChild(hint);
+        setTimeout(() => { if (hint.parentElement) hint.remove(); }, 2500);
+    }
+}
+
+// ═══════════════════════════════════════════════════════════
+// NAVIGATION
 // ═══════════════════════════════════════════════════════════
 function goTo(step) {
     if (step === currentStep) return;
@@ -123,21 +162,15 @@ function goTo(step) {
     const prev = steps[currentStep];
     const next = steps[step];
 
-    // Pick a random animation type
+    // Pick random animation type
     const animType = ANIM_TYPES[Math.floor(Math.random() * ANIM_TYPES.length)];
-
-    // Clean old animation classes
-    steps.forEach(s => {
-        ANIM_TYPES.forEach(a => { if (a !== 'default') s.classList.remove(a); });
-    });
-
-    // Apply animation class
+    steps.forEach(s => ANIM_TYPES.forEach(a => { if (a !== 'default') s.classList.remove(a); }));
     if (animType !== 'default') {
         prev.classList.add(animType);
         next.classList.add(animType);
     }
 
-    // Exit animation
+    // Exit
     if (step > currentStep) {
         prev.classList.remove('active');
         prev.classList.add('exit-up');
@@ -146,7 +179,6 @@ function goTo(step) {
         prev.style.transform = 'translateY(50px)';
         prev.style.opacity = '0';
     }
-
     setTimeout(() => {
         prev.classList.remove('exit-up');
         prev.style.transform = '';
@@ -158,50 +190,159 @@ function goTo(step) {
     currentStep = step;
     next.scrollTop = 0;
 
-    // Progress bar
+    // Progress
     const progress = step === 0 ? 0 : (step / TOTAL_STEPS) * 100;
     document.getElementById('progressFill').style.width = progress + '%';
-
-    // Progress dots
     updateDots(step);
 
-    // Auto-focus first input
+    // Encouragement
+    showEncouragement(step);
+
+    // Completion counter on thank you page
+    if (step === 10) showCompletionCounter();
+
+    // Auto-focus
     setTimeout(() => {
         const input = next.querySelector('textarea, input');
         if (input) input.focus();
     }, 400);
+
+    // Save progress
+    saveProgress();
 }
 
 // ═══════════════════════════════════════════════════════════
-// DISCOVERY — "How did you hear about us?"
+// SWIPE NAVIGATION (mobile)
+// ═══════════════════════════════════════════════════════════
+function initSwipe() {
+    let startX = 0, startY = 0, swiping = false;
+
+    document.addEventListener('touchstart', (e) => {
+        startX = e.touches[0].clientX;
+        startY = e.touches[0].clientY;
+        swiping = true;
+    }, { passive: true });
+
+    document.addEventListener('touchend', (e) => {
+        if (!swiping) return;
+        swiping = false;
+        const dx = e.changedTouches[0].clientX - startX;
+        const dy = e.changedTouches[0].clientY - startY;
+
+        // Only swipe if horizontal movement > 60px and > vertical movement
+        if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy)) return;
+
+        if (dx > 0) {
+            // Swipe right → next step (RTL: right = forward)
+            handleSwipeForward();
+        } else {
+            // Swipe left → previous step (RTL: left = back)
+            handleSwipeBack();
+        }
+    }, { passive: true });
+}
+
+function handleSwipeForward() {
+    if (currentStep === 0) goTo(1);
+    else if (currentStep === 1 && formData.discovery) goTo(2);
+    else if (currentStep === 2 && formData.frequency) goTo(3);
+    else if (currentStep === 3 && formData.overallRating) goTo(4);
+    else if (currentStep === 4) goTo(5);
+    else if (currentStep === 5 && formData.favoriteFlavor) goTo(6);
+    else if (currentStep === 6) goTo(7);
+    else if (currentStep === 7 && formData.recommend) goTo(8);
+    else if (currentStep === 8) goTo(9);
+    else if (currentStep >= 1 && currentStep <= 9) {
+        // Show validation if trying to swipe forward without selection
+        const step = document.querySelectorAll('.step')[currentStep];
+        const grid = step.querySelector('.select-grid, .emoji-grid, .recommend-grid');
+        if (grid) showValidationHint(grid, 'اختار إجابة الأول ✋');
+    }
+}
+
+function handleSwipeBack() {
+    if (currentStep > 0 && currentStep <= 9) goTo(currentStep - 1);
+}
+
+// ═══════════════════════════════════════════════════════════
+// AUTO-SAVE PROGRESS
+// ═══════════════════════════════════════════════════════════
+function saveProgress() {
+    try {
+        localStorage.setItem('bb_progress', JSON.stringify({
+            step: currentStep,
+            data: formData
+        }));
+    } catch (e) { /* ignore */ }
+}
+
+function restoreProgress() {
+    try {
+        const saved = localStorage.getItem('bb_progress');
+        if (!saved) return;
+        const { step, data } = JSON.parse(saved);
+        if (!data || step >= 10) {
+            localStorage.removeItem('bb_progress');
+            return;
+        }
+        // Restore formData
+        Object.assign(formData, data);
+        // Jump to saved step
+        if (step > 0 && step < 10) {
+            setTimeout(() => goTo(step), 900); // After skeleton hides
+        }
+    } catch (e) {
+        localStorage.removeItem('bb_progress');
+    }
+}
+
+// ═══════════════════════════════════════════════════════════
+// COMPLETION COUNTER
+// ═══════════════════════════════════════════════════════════
+function showCompletionCounter() {
+    const container = document.querySelector('[data-step="10"] .step-content');
+    if (!container || container.querySelector('.completion-counter')) return;
+
+    // Get count from localStorage
+    let count = parseInt(localStorage.getItem('bb_response_count') || '0') + 1;
+    localStorage.setItem('bb_response_count', count.toString());
+
+    // Random offset for "social proof" feel
+    const displayCount = count + 247;
+
+    const counter = document.createElement('div');
+    counter.className = 'completion-counter';
+    counter.textContent = `أنت الشخص رقم #${displayCount} اللي شاركنا رأيه 🌟`;
+
+    // Insert after subtitle
+    const subtitle = container.querySelector('.step-subtitle');
+    if (subtitle) subtitle.after(counter);
+
+    // Clear saved progress
+    localStorage.removeItem('bb_progress');
+}
+
+// ═══════════════════════════════════════════════════════════
+// SELECTIONS
 // ═══════════════════════════════════════════════════════════
 function selectDiscovery(card) {
-    haptic();
-    pulseGlow(card);
+    haptic(); pulseGlow(card);
     document.querySelectorAll('#step-discovery .select-card').forEach(c => c.classList.remove('selected'));
     card.classList.add('selected');
     formData.discovery = card.dataset.value;
     setTimeout(() => goTo(2), 350);
 }
 
-// ═══════════════════════════════════════════════════════════
-// FREQUENCY — "How often do you buy?"
-// ═══════════════════════════════════════════════════════════
 function selectFrequency(card) {
-    haptic();
-    pulseGlow(card);
+    haptic(); pulseGlow(card);
     document.querySelectorAll('#step-frequency .select-card').forEach(c => c.classList.remove('selected'));
     card.classList.add('selected');
     formData.frequency = card.dataset.value;
     setTimeout(() => goTo(3), 350);
 }
 
-// ═══════════════════════════════════════════════════════════
-// OVERALL RATING
-// ═══════════════════════════════════════════════════════════
 function selectOverall(btn) {
-    haptic();
-    pulseGlow(btn);
+    haptic(); pulseGlow(btn);
     document.querySelectorAll('.emoji-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
     formData.overallRating = parseInt(btn.dataset.rating);
@@ -210,55 +351,38 @@ function selectOverall(btn) {
     setTimeout(() => goTo(4), 350);
 }
 
-// ═══════════════════════════════════════════════════════════
-// FLAVOR RATINGS (star wave animation)
-// ═══════════════════════════════════════════════════════════
 function rateFlavor(flavor, rating) {
     haptic();
     formData.flavors[flavor] = rating;
     const container = document.querySelector(`.star-rating[data-flavor="${flavor}"]`);
     const stars = container.querySelectorAll('.star-btn');
     stars.forEach((s, i) => {
-        const isActive = (i + 1) <= rating;
-        setTimeout(() => {
-            s.classList.toggle('active', isActive);
-        }, i * 40);
+        setTimeout(() => s.classList.toggle('active', (i + 1) <= rating), i * 40);
     });
+    saveProgress();
 }
 
-// ═══════════════════════════════════════════════════════════
-// FAVORITE FLAVOR
-// ═══════════════════════════════════════════════════════════
 function selectFavorite(card) {
-    haptic();
-    pulseGlow(card);
+    haptic(); pulseGlow(card);
     document.querySelectorAll('#step-favorite .select-card').forEach(c => c.classList.remove('selected'));
     card.classList.add('selected');
     formData.favoriteFlavor = card.dataset.value;
     setTimeout(() => goTo(6), 350);
 }
 
-// ═══════════════════════════════════════════════════════════
-// SATISFACTION RATINGS (with wave)
-// ═══════════════════════════════════════════════════════════
 function rateArea(area, rating) {
     haptic();
     formData.satisfaction[area] = rating;
     const container = document.querySelector(`.mini-stars[data-area="${area}"]`);
     const stars = container.querySelectorAll('.mini-star');
     stars.forEach((s, i) => {
-        setTimeout(() => {
-            s.classList.toggle('active', (i + 1) <= rating);
-        }, i * 30);
+        setTimeout(() => s.classList.toggle('active', (i + 1) <= rating), i * 30);
     });
+    saveProgress();
 }
 
-// ═══════════════════════════════════════════════════════════
-// RECOMMEND
-// ═══════════════════════════════════════════════════════════
 function selectRecommend(btn) {
-    haptic();
-    pulseGlow(btn);
+    haptic(); pulseGlow(btn);
     document.querySelectorAll('.recommend-btn').forEach(b => b.classList.remove('selected'));
     btn.classList.add('selected');
     formData.recommend = btn.dataset.value;
@@ -270,8 +394,7 @@ function selectRecommend(btn) {
 // DARK MODE
 // ═══════════════════════════════════════════════════════════
 function initDarkMode() {
-    const saved = localStorage.getItem('bb_dark');
-    if (saved === 'true') {
+    if (localStorage.getItem('bb_dark') === 'true') {
         document.body.classList.add('dark');
         document.getElementById('themeIcon').textContent = '☀️';
     }
@@ -285,7 +408,7 @@ function toggleDark() {
 }
 
 // ═══════════════════════════════════════════════════════════
-// SHARING — WhatsApp + Copy Link
+// SHARING
 // ═══════════════════════════════════════════════════════════
 function getFormURL() {
     return window.location.href.split('#')[0].split('?')[0];
@@ -300,14 +423,12 @@ function initShareLinks() {
 
 function copyFormLink() {
     haptic();
-    const url = getFormURL();
-    navigator.clipboard.writeText(url).then(() => {
+    navigator.clipboard.writeText(getFormURL()).then(() => {
         const btn = document.querySelector('.share-btn.copy-link');
         const original = btn.innerHTML;
         btn.innerHTML = '✅ تم النسخ!';
         setTimeout(() => { btn.innerHTML = original; }, 2000);
     }).catch(() => {
-        // Fallback for older browsers
         const ta = document.createElement('textarea');
         ta.value = getFormURL();
         document.body.appendChild(ta);
@@ -318,7 +439,7 @@ function copyFormLink() {
 }
 
 // ═══════════════════════════════════════════════════════════
-// QR CODE — use local image
+// QR CODE
 // ═══════════════════════════════════════════════════════════
 function generateQR() {
     const container = document.getElementById('qrCode');
@@ -340,13 +461,11 @@ async function submitForm() {
     btn.disabled = true;
     btn.innerHTML = '<div class="spinner"></div> جاري الإرسال...';
 
-    // Gather text fields
     formData.suggestions = document.getElementById('suggestions').value.trim();
     formData.name = document.getElementById('userName').value.trim();
     formData.phone = document.getElementById('userPhone').value.trim();
     formData.email = document.getElementById('userEmail').value.trim();
 
-    // Build payload for Google Sheets
     const payload = {
         timestamp: new Date().toLocaleString('ar-EG'),
         discovery: formData.discovery || '-',
@@ -371,10 +490,7 @@ async function submitForm() {
         email: formData.email || '-'
     };
 
-    // Use hidden form + iframe to bypass ALL CORS restrictions
-    // (works from file://, localhost, any domain)
     try {
-        // Create hidden iframe
         let iframe = document.getElementById('_hidden_iframe');
         if (!iframe) {
             iframe = document.createElement('iframe');
@@ -384,14 +500,12 @@ async function submitForm() {
             document.body.appendChild(iframe);
         }
 
-        // Create hidden form
         const form = document.createElement('form');
         form.method = 'POST';
         form.action = GOOGLE_SHEETS_URL;
         form.target = '_hidden_iframe';
         form.style.display = 'none';
 
-        // Add each field as a hidden input
         for (const [key, value] of Object.entries(payload)) {
             const input = document.createElement('input');
             input.type = 'hidden';
@@ -424,7 +538,7 @@ function saveLocally(payload) {
 }
 
 // ═══════════════════════════════════════════════════════════
-// CONFETTI 🎉
+// CONFETTI
 // ═══════════════════════════════════════════════════════════
 function launchConfetti() {
     const container = document.getElementById('confetti');
@@ -446,21 +560,12 @@ function launchConfetti() {
 }
 
 // ═══════════════════════════════════════════════════════════
-// KEYBOARD NAVIGATION
+// KEYBOARD NAV
 // ═══════════════════════════════════════════════════════════
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Enter') {
         if (e.target.tagName === 'TEXTAREA' && !e.ctrlKey && !e.metaKey) return;
         e.preventDefault();
-        if (currentStep === 0) goTo(1);
-        else if (currentStep === 1 && formData.discovery) goTo(2);
-        else if (currentStep === 2 && formData.frequency) goTo(3);
-        else if (currentStep === 3 && formData.overallRating) goTo(4);
-        else if (currentStep === 4) goTo(5);
-        else if (currentStep === 5 && formData.favoriteFlavor) goTo(6);
-        else if (currentStep === 6) goTo(7);
-        else if (currentStep === 7 && formData.recommend) goTo(8);
-        else if (currentStep === 8) goTo(9);
-        else if (currentStep === 9) submitForm();
+        handleSwipeForward();
     }
 });
