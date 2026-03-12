@@ -752,12 +752,13 @@ textarea.text-input {
    RESPONSIVE — MOBILE
    ═══════════════════════════════════════════════════════════ */
 @media (max-width: 640px) {
-    /* Keep flex-start for scrollability but use margin auto to center short content */
     .step {
         padding: 20px 16px;
         padding-top: 24px;
+        justify-content: flex-start;
     }
 
+    /* margin:auto centers short content vertically, long content scrolls from top */
     .step-content {
         margin: auto 0;
         padding-top: 12px;
@@ -768,30 +769,27 @@ textarea.text-input {
     .step-title { font-size: 1.3rem; }
     .step-subtitle { margin-bottom: 20px; font-size: 0.85rem; }
 
-    /* Buttons: stack vertically, primary first */
+    /* Buttons: stack vertically centered, not full-width */
     .btn-row {
         flex-direction: column-reverse;
         align-items: center;
         gap: 10px;
-        width: 100%;
     }
 
     .btn-primary {
-        padding: 14px 28px;
-        width: 100%;
-        max-width: 280px;
+        padding: 14px 40px;
+        width: auto;
         justify-content: center;
         font-size: 0.9rem;
     }
 
     .btn-secondary {
-        padding: 10px 20px;
-        width: 100%;
-        max-width: 280px;
+        padding: 10px 28px;
+        width: auto;
         justify-content: center;
     }
 
-    /* Emojis: 5 in a row, smaller */
+    /* Emojis */
     .emoji-grid { gap: 8px; }
     .emoji-btn { width: 56px; height: 56px; font-size: 22px; border-radius: 14px; }
     .emoji-btn .emoji-label { font-size: 0.5rem; }
@@ -808,7 +806,7 @@ textarea.text-input {
     .flavor-card { padding: 14px 14px; }
     .flavor-emoji { width: 36px; height: 36px; font-size: 17px; }
     .flavor-name { font-size: 0.9rem; }
-    .star-btn { font-size: 24px; gap: 4px; }
+    .star-btn { font-size: 24px; }
 
     /* Satisfaction */
     .satisfaction-grid { gap: 10px; }
@@ -822,11 +820,11 @@ textarea.text-input {
         display: grid;
         grid-template-columns: 1fr 1fr;
         gap: 10px;
-        max-width: 300px;
+        max-width: 280px;
         margin-left: auto;
         margin-right: auto;
     }
-    .recommend-btn { padding: 14px 12px; min-width: unset; }
+    .recommend-btn { padding: 14px 12px; min-width: unset; width: 100%; }
     .recommend-btn .rec-emoji { font-size: 24px; }
     .recommend-btn .rec-label { font-size: 0.75rem; }
 
