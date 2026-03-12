@@ -268,6 +268,7 @@ function handleSwipeBack() {
 // AUTO-SAVE PROGRESS
 // ═══════════════════════════════════════════════════════════
 function saveProgress() {
+    if (currentStep >= 10) return;
     try {
         localStorage.setItem('bb_progress', JSON.stringify({
             step: currentStep,
@@ -300,19 +301,6 @@ function restoreProgress() {
 // COMPLETION COUNTER
 // ═══════════════════════════════════════════════════════════
 function showCompletionCounter() {
-    const container = document.querySelector('[data-step="10"] .step-content');
-    if (!container || container.querySelector('.completion-counter')) return;
-
-    // Get count from localStorage
-    let count = parseInt(localStorage.getItem('bb_response_count') || '0') + 1;
-    localStorage.setItem('bb_response_count', count.toString());
-
-
-
-    // Insert after subtitle
-    const subtitle = container.querySelector('.step-subtitle');
-    if (subtitle) subtitle.after(counter);
-
     // Clear saved progress
     localStorage.removeItem('bb_progress');
 }
