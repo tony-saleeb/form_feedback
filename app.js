@@ -307,12 +307,7 @@ function showCompletionCounter() {
     let count = parseInt(localStorage.getItem('bb_response_count') || '0') + 1;
     localStorage.setItem('bb_response_count', count.toString());
 
-    // Random offset for "social proof" feel
-    const displayCount = count + 247;
 
-    const counter = document.createElement('div');
-    counter.className = 'completion-counter';
-    counter.textContent = `أنت الشخص رقم #${displayCount} اللي شاركنا رأيه 🌟`;
 
     // Insert after subtitle
     const subtitle = container.querySelector('.step-subtitle');
