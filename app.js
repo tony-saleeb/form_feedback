@@ -318,15 +318,13 @@ function copyFormLink() {
 }
 
 // ═══════════════════════════════════════════════════════════
-// QR CODE — lightweight generator (no library!)
+// QR CODE — use local image
 // ═══════════════════════════════════════════════════════════
 function generateQR() {
     const container = document.getElementById('qrCode');
     if (!container) return;
-    const url = getFormURL();
-    // Use Google Charts QR API (free, no library needed)
     const img = document.createElement('img');
-    img.src = `https://chart.googleapis.com/chart?cht=qr&chs=240x240&chl=${encodeURIComponent(url)}&choe=UTF-8`;
+    img.src = 'qr-code.png';
     img.alt = 'QR Code';
     img.style.width = '120px';
     img.style.height = '120px';

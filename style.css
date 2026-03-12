@@ -116,6 +116,7 @@ body {
     height: 4px;
     background: var(--beige-dark);
     z-index: 100;
+    direction: ltr;
 }
 
 .progress-fill {
@@ -764,6 +765,7 @@ textarea.text-input {
     background: rgba(255, 255, 255, 0.6);
     backdrop-filter: blur(8px);
     -webkit-backdrop-filter: blur(8px);
+    direction: ltr;
 }
 
 .dot {
