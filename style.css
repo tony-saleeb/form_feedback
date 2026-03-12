@@ -1158,8 +1158,7 @@ body.dark .step-number { color: var(--green); }
    ═══════════════════════════════════════════════════════════ */
 @media (max-width: 640px) {
     .step {
-        padding: 20px 16px;
-        padding-top: 24px;
+        padding: 24px 16px 120px 16px;
         justify-content: flex-start;
     }
 
@@ -1190,7 +1189,7 @@ body.dark .step-number { color: var(--green); }
     .step-content {
         margin: 0;
         padding-top: 12px;
-        padding-bottom: 100px;
+        padding-bottom: 0;
     }
 
     .btn-primary {
