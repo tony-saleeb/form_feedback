@@ -752,49 +752,103 @@ textarea.text-input {
    RESPONSIVE — MOBILE
    ═══════════════════════════════════════════════════════════ */
 @media (max-width: 640px) {
+    /* Keep flex-start for scrollability but use margin auto to center short content */
     .step {
-        padding: 16px 14px;
-        justify-content: flex-start;
-        padding-top: max(40px, 8vh);
+        padding: 20px 16px;
+        padding-top: 24px;
     }
 
-    .brand-logo { width: 60px; }
-    .step-subtitle { margin-bottom: 20px; }
+    .step-content {
+        margin: auto 0;
+        padding-top: 12px;
+        padding-bottom: 24px;
+    }
+
+    .brand-logo { width: 64px; }
+    .step-title { font-size: 1.3rem; }
+    .step-subtitle { margin-bottom: 20px; font-size: 0.85rem; }
+
+    /* Buttons: stack vertically, primary first */
+    .btn-row {
+        flex-direction: column-reverse;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+    }
 
     .btn-primary {
-        padding: 13px 28px;
+        padding: 14px 28px;
         width: 100%;
-        max-width: 300px;
+        max-width: 280px;
         justify-content: center;
         font-size: 0.9rem;
     }
 
-    .emoji-btn { width: 58px; height: 58px; font-size: 22px; }
+    .btn-secondary {
+        padding: 10px 20px;
+        width: 100%;
+        max-width: 280px;
+        justify-content: center;
+    }
 
+    /* Emojis: 5 in a row, smaller */
+    .emoji-grid { gap: 8px; }
+    .emoji-btn { width: 56px; height: 56px; font-size: 22px; border-radius: 14px; }
+    .emoji-btn .emoji-label { font-size: 0.5rem; }
+
+    /* Select cards */
+    .select-grid { gap: 10px; max-width: 320px; }
     .select-card { padding: 14px 10px; }
     .select-card .card-icon { font-size: 22px; }
     .select-card .card-label { font-size: 0.75rem; }
+    .select-grid.single-col { max-width: 260px; }
 
-    .flavor-card { padding: 14px 16px; }
-    .flavor-emoji { width: 38px; height: 38px; font-size: 18px; }
-    .star-btn { font-size: 24px; }
+    /* Flavor cards */
+    .flavor-cards { gap: 10px; }
+    .flavor-card { padding: 14px 14px; }
+    .flavor-emoji { width: 36px; height: 36px; font-size: 17px; }
+    .flavor-name { font-size: 0.9rem; }
+    .star-btn { font-size: 24px; gap: 4px; }
 
+    /* Satisfaction */
+    .satisfaction-grid { gap: 10px; }
     .satisfaction-item { padding: 12px 14px; }
-    .satisfaction-icon { width: 32px; height: 32px; font-size: 16px; }
-    .mini-star { font-size: 18px; }
+    .satisfaction-icon { width: 30px; height: 30px; font-size: 15px; }
+    .satisfaction-label { font-size: 0.8rem; gap: 8px; }
+    .mini-star { font-size: 17px; }
 
-    .recommend-btn { padding: 14px 18px; min-width: 80px; }
+    /* Recommend: 2x2 grid on mobile */
+    .recommend-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+        max-width: 300px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .recommend-btn { padding: 14px 12px; min-width: unset; }
     .recommend-btn .rec-emoji { font-size: 24px; }
+    .recommend-btn .rec-label { font-size: 0.75rem; }
+
+    /* Inputs */
+    .input-group, .input-row { max-width: 320px; }
+    .text-input { padding: 12px 16px; font-size: 0.85rem; }
+    textarea.text-input { min-height: 100px; }
 }
 
 @media (max-width: 360px) {
-    .select-grid { grid-template-columns: 1fr; max-width: 260px; }
+    .select-grid { grid-template-columns: 1fr; max-width: 240px; }
+    .emoji-btn { width: 50px; height: 50px; font-size: 20px; }
+    .recommend-grid { max-width: 260px; }
+    .step-title { font-size: 1.15rem; }
 }
 
-@media (max-height: 700px) {
-    .step { padding-top: 30px; justify-content: flex-start; }
-    .brand-logo { width: 50px; margin-bottom: 4px; }
-    .brand-name { margin-bottom: 12px; font-size: 1rem; }
+@media (max-height: 680px) {
+    .step-content { padding-top: 6px; }
+    .brand-logo { width: 48px; margin-bottom: 4px; }
+    .brand-name { margin-bottom: 10px; font-size: 1rem; }
+    .step-title { font-size: 1.2rem; margin-bottom: 4px; }
+    .step-subtitle { margin-bottom: 14px; }
 }
 
 /* ── Safe area (notch phones) ── */
@@ -802,3 +856,4 @@ textarea.text-input {
     .progress-bar { top: env(safe-area-inset-top); }
     .step { padding-bottom: env(safe-area-inset-bottom); }
 }
+
