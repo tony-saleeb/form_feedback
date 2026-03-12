@@ -1196,9 +1196,14 @@ body.dark .step-number { color: var(--green); }
     }
 
     .step-content {
-        margin: 0;
+        margin: 0 auto;
         padding-top: 12px;
-        padding-bottom: 24px;
+        /* Add huge padding to the content itself rather than the container */
+        padding-bottom: 140px;
+        /* Push content to top on mobile instead of center */
+        display: flex;
+        flex-direction: column;
+        min-height: min-content;
     }
 
     .btn-primary {
