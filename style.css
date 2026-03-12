@@ -1188,9 +1188,9 @@ body.dark .step-number { color: var(--green); }
     }
 
     .step-content {
-        margin: auto 0;
+        margin: 0;
         padding-top: 12px;
-        padding-bottom: 80px;
+        padding-bottom: 100px;
     }
 
     .btn-primary {
